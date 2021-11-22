@@ -21,6 +21,14 @@ import static java.lang.System.lineSeparator;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+/**
+ * <div>
+ *     <h1>XsdPathTypeGenerator Using Apache XMLBean</h1>
+ *     <p></p>
+ * </div>
+ * @author u724779
+ * @since jdk-1.8.0_162
+ */
 public class XsdPathTypeGenerator {
 
     @SneakyThrows
@@ -30,7 +38,7 @@ public class XsdPathTypeGenerator {
             .map(this::loadXsd)
             .toArray(String[]::new);
 
-        final Xsd2InstOptions options = new Xsd2InstOptions();
+         final Xsd2InstOptions options = new Xsd2InstOptions();
         final String xml = SchemaInstanceGenerator.xsd2inst(xsds,rootElement, options);
 
         final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(xml.getBytes());
@@ -39,7 +47,8 @@ public class XsdPathTypeGenerator {
         final DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
         final Document doc = docBuilder.parse(byteArrayInputStream);
 
-        Context context = new Context("ns");
+//        Context context = new Context("ns");
+        Context context = new Context("urn");
 
         parseElement(context, doc.getDocumentElement());
 
@@ -98,15 +107,14 @@ public class XsdPathTypeGenerator {
     @SneakyThrows
     private String loadXsd(String path) {
         Class<?> clazz = this.getClass();
-        InputStream inputStream = clazz.getResourceAsStream(path);
-        return readFromInputStream(inputStream);
+            InputStream inputStream = clazz.getResourceAsStream(path);
+            return readFromInputStream(inputStream);
     }
 
     private String readFromInputStream(InputStream inputStream)
         throws IOException {
         StringBuilder resultStringBuilder = new StringBuilder();
-        try (BufferedReader br
-                 = new BufferedReader(new InputStreamReader(inputStream))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
             String line;
             while ((line = br.readLine()) != null) {
                 resultStringBuilder.append(line).append("\n");
@@ -117,7 +125,6 @@ public class XsdPathTypeGenerator {
 
 
     static class Context {
-
         private final String namespace;
 
         @Getter
